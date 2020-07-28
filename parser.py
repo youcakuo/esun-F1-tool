@@ -60,7 +60,7 @@ def pngTojpeg(src):
                     im = Image.open(os.path.join(src,f,img))
                     rgb_im = im.convert('RGB')
                     print('save',img[:-4]+'.jpg')
-                    rgb_im.save(os.path.join(src,f,img[:-4]+'.jpg'),optimize=True,quality=5)
+                    rgb_im.save(os.path.join(src,f,img[:-4]+'.jpg'),optimize=True,quality=25)
                     os.remove(os.path.join(src,f,img))
         elif f.endswith('.html'):
             fin = open(os.path.join(src, f), 'rt', encoding="utf-8")
