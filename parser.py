@@ -63,6 +63,9 @@ def pngTojpeg(src):
                 print(img)
                 if img.endswith('.png'):
                     im = Image.open(os.path.join(src,f,img))
+                    width, height = im.size
+                    if width>1000 or height>1000:
+                        im = im.resize((160, 300), Image.ANTIALIAS)
                     rgb_im = im.convert('RGB')
                     print('save',img[:-4]+'.jpg')
                     rgb_im.save(os.path.join(src,f,img[:-4]+'.jpg'),optimize=True,quality=7)
@@ -108,7 +111,7 @@ def getNewTxnList(src):
             result.append(f[7:])
     return result
 
-def pngTojpeg2(src, qt):
+def pngTojpeg2(src, qt, sz):
     src = src + '//html'
     newTxn = getNewTxnList(src)
     print('newTxn:', newTxn)
@@ -119,6 +122,15 @@ def pngTojpeg2(src, qt):
                 print('processing', f, img)
                 if img.endswith('.png'):
                     im = Image.open(os.path.join(src,f,img))
+                    width, height = im.size
+                    print('width', width, 'height', height)
+                    if width > sz or height > sz:
+                        ratio = 1
+                        if width > height:
+                            ratio = sz/width
+                        else:
+                            ratio = sz/height
+                        im = im.resize((int(width*ratio), int(height*ratio)), Image.ANTIALIAS)
                     rgb_im = im.convert('RGB')
                     # print('save',img[:-4]+'.jpg')
                     rgb_im.save(os.path.join(src,f,img[:-4]+'.jpg'),optimize=True,quality=qt)
@@ -153,15 +165,17 @@ def extract_jar_files(src, dst):
     print('remove jar file', os.path.join(dst, jar_file))
     os.remove(os.path.join(dst, jar_file))
 
-def main3(quality):
+def main3(quality, size):
     extract_jar_files(jar_backup, result_path)
-    pngTojpeg2(result_path, quality)
+    pngTojpeg2(result_path, quality, size)
     jar_folder(result_path)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-q', '--quality', help='轉出圖檔品質')
+    parser.add_argument('-s', '--size', help='圖檔品質長高pixel限制')
     args = parser.parse_args()
-    quality = int(args.quality) if args.quality else 30
+    quality = int(args.quality) if args.quality else 70
+    size = int(args.size) if args.size else 650
 
-    main3(quality)
+    main3(quality, size)
