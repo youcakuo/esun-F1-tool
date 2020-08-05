@@ -5,3 +5,6 @@ build/
 parser.spec
 results/
 unzips/
+backup/
+html_backup/
+*.jar
